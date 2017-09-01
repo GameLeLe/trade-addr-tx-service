@@ -6,12 +6,12 @@ import (
 
 	"crypto/sha256"
 
-	"github.com/TankerApp/gocoin/base58check"
+	"github.com/GameLeLe/trade-addr-tx-service/base58check"
 	"github.com/ethereum/go-ethereum/crypto"
 	"golang.org/x/crypto/ripemd160"
 
-	bip39 "./bip39"
-	hdwallet "./hdwallet"
+	bip39 "github.com/GameLeLe/trade-addr-tx-service/bip39"
+	hdwallet "github.com/GameLeLe/trade-addr-tx-service/hdwallet"
 )
 
 func main() {

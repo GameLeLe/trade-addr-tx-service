@@ -7,7 +7,7 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/TankerApp/gocoin/base58check/base58"
+	"github.com/GameLeLe/trade-addr-tx-service/base58check/base58"
 )
 
 func Encode(prefix byte, byteData []byte) string {
