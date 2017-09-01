@@ -6,5 +6,5 @@ struct GetAddrMsg{
 }
 
 service AddrTXService{
-    string getAddr(1: GetAddrMsg msg);
+    string GetAddr(1: GetAddrMsg msg);
 }
