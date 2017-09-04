@@ -67,7 +67,11 @@ package main
 // 	fmt.Println(genBTCAddr(childpub02.Pub().Key, false))
 // }
 
+// func main() {
+// 	rpcServe := newRPCServer(8099)
+// 	rpcServe.start()
+// }
+
 func main() {
-	rpcServe := newRPCServer(8099)
-	rpcServe.start()
+
 }

@@ -108,7 +108,7 @@ func Expand(key []byte) (*big.Int, *big.Int) {
 	exp := big.NewInt(1)
 	exp.Add(params.P, exp)
 	exp.Div(exp, big.NewInt(4))
-	x := big.NewInt(0).SetBytes(key[1:33])
+	x := big.NewInt(0).SetBytes(key[1:len(key)])
 	y := big.NewInt(0).SetBytes(key[:1])
 	beta := big.NewInt(0)
 	beta.Exp(x, big.NewInt(3), nil)

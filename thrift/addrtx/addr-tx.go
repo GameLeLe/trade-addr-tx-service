@@ -153,10 +153,273 @@ func (p *GetAddrMsg) String() string {
   return fmt.Sprintf("GetAddrMsg(%+v)", *p)
 }
 
+// Attributes:
+//  - CoinType
+//  - FromUID
+//  - FromAmount
+//  - ToUID
+//  - ToAmount
+type GetTXMsg struct {
+  CoinType string `thrift:"coinType,1,required" db:"coinType" json:"coinType"`
+  FromUID int64 `thrift:"fromUID,2,required" db:"fromUID" json:"fromUID"`
+  FromAmount int64 `thrift:"fromAmount,3,required" db:"fromAmount" json:"fromAmount"`
+  ToUID int64 `thrift:"toUID,4,required" db:"toUID" json:"toUID"`
+  ToAmount int64 `thrift:"toAmount,5,required" db:"toAmount" json:"toAmount"`
+}
+
+func NewGetTXMsg() *GetTXMsg {
+  return &GetTXMsg{}
+}
+
+
+func (p *GetTXMsg) GetCoinType() string {
+  return p.CoinType
+}
+
+func (p *GetTXMsg) GetFromUID() int64 {
+  return p.FromUID
+}
+
+func (p *GetTXMsg) GetFromAmount() int64 {
+  return p.FromAmount
+}
+
+func (p *GetTXMsg) GetToUID() int64 {
+  return p.ToUID
+}
+
+func (p *GetTXMsg) GetToAmount() int64 {
+  return p.ToAmount
+}
+func (p *GetTXMsg) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+  var issetCoinType bool = false;
+  var issetFromUID bool = false;
+  var issetFromAmount bool = false;
+  var issetToUID bool = false;
+  var issetToAmount bool = false;
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+      issetCoinType = true
+    case 2:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField2(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+      issetFromUID = true
+    case 3:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField3(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+      issetFromAmount = true
+    case 4:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField4(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+      issetToUID = true
+    case 5:
+      if fieldTypeId == thrift.I64 {
+        if err := p.ReadField5(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+      issetToAmount = true
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  if !issetCoinType{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field CoinType is not set"));
+  }
+  if !issetFromUID{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field FromUID is not set"));
+  }
+  if !issetFromAmount{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field FromAmount is not set"));
+  }
+  if !issetToUID{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field ToUID is not set"));
+  }
+  if !issetToAmount{
+    return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("Required field ToAmount is not set"));
+  }
+  return nil
+}
+
+func (p *GetTXMsg)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.CoinType = v
+}
+  return nil
+}
+
+func (p *GetTXMsg)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.FromUID = v
+}
+  return nil
+}
+
+func (p *GetTXMsg)  ReadField3(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.FromAmount = v
+}
+  return nil
+}
+
+func (p *GetTXMsg)  ReadField4(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 4: ", err)
+} else {
+  p.ToUID = v
+}
+  return nil
+}
+
+func (p *GetTXMsg)  ReadField5(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadI64(); err != nil {
+  return thrift.PrependError("error reading field 5: ", err)
+} else {
+  p.ToAmount = v
+}
+  return nil
+}
+
+func (p *GetTXMsg) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("GetTXMsg"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+    if err := p.writeField3(oprot); err != nil { return err }
+    if err := p.writeField4(oprot); err != nil { return err }
+    if err := p.writeField5(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *GetTXMsg) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("coinType", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:coinType: ", p), err) }
+  if err := oprot.WriteString(string(p.CoinType)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.coinType (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:coinType: ", p), err) }
+  return err
+}
+
+func (p *GetTXMsg) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("fromUID", thrift.I64, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:fromUID: ", p), err) }
+  if err := oprot.WriteI64(int64(p.FromUID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.fromUID (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:fromUID: ", p), err) }
+  return err
+}
+
+func (p *GetTXMsg) writeField3(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("fromAmount", thrift.I64, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:fromAmount: ", p), err) }
+  if err := oprot.WriteI64(int64(p.FromAmount)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.fromAmount (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:fromAmount: ", p), err) }
+  return err
+}
+
+func (p *GetTXMsg) writeField4(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("toUID", thrift.I64, 4); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 4:toUID: ", p), err) }
+  if err := oprot.WriteI64(int64(p.ToUID)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.toUID (4) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 4:toUID: ", p), err) }
+  return err
+}
+
+func (p *GetTXMsg) writeField5(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("toAmount", thrift.I64, 5); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 5:toAmount: ", p), err) }
+  if err := oprot.WriteI64(int64(p.ToAmount)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.toAmount (5) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 5:toAmount: ", p), err) }
+  return err
+}
+
+func (p *GetTXMsg) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("GetTXMsg(%+v)", *p)
+}
+
 type AddrTXService interface {
   // Parameters:
   //  - Msg
   GetAddr(msg *GetAddrMsg) (r string, err error)
+  // Parameters:
+  //  - Msg
+  GetTX(msg *GetTXMsg) (r string, err error)
 }
 
 type AddrTXServiceClient struct {
@@ -199,7 +462,7 @@ func (p *AddrTXServiceClient) sendGetAddr(msg *GetAddrMsg)(err error) {
     p.OutputProtocol = oprot
   }
   p.SeqId++
-  if err = oprot.WriteMessageBegin("getAddr", thrift.CALL, p.SeqId); err != nil {
+  if err = oprot.WriteMessageBegin("GetAddr", thrift.CALL, p.SeqId); err != nil {
       return
   }
   args := AddrTXServiceGetAddrArgs{
@@ -225,12 +488,12 @@ func (p *AddrTXServiceClient) recvGetAddr() (value string, err error) {
   if err != nil {
     return
   }
-  if method != "getAddr" {
-    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "getAddr failed: wrong method name")
+  if method != "GetAddr" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "GetAddr failed: wrong method name")
     return
   }
   if p.SeqId != seqId {
-    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "getAddr failed: out of sequence response")
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "GetAddr failed: out of sequence response")
     return
   }
   if mTypeId == thrift.EXCEPTION {
@@ -247,10 +510,86 @@ func (p *AddrTXServiceClient) recvGetAddr() (value string, err error) {
     return
   }
   if mTypeId != thrift.REPLY {
-    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "getAddr failed: invalid message type")
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "GetAddr failed: invalid message type")
     return
   }
   result := AddrTXServiceGetAddrResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - Msg
+func (p *AddrTXServiceClient) GetTX(msg *GetTXMsg) (r string, err error) {
+  if err = p.sendGetTX(msg); err != nil { return }
+  return p.recvGetTX()
+}
+
+func (p *AddrTXServiceClient) sendGetTX(msg *GetTXMsg)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("GetTX", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := AddrTXServiceGetTXArgs{
+  Msg : msg,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *AddrTXServiceClient) recvGetTX() (value string, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "GetTX" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "GetTX failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "GetTX failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error2 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error3 error
+    error3, err = error2.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error3
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "GetTX failed: invalid message type")
+    return
+  }
+  result := AddrTXServiceGetTXResult{}
   if err = result.Read(iprot); err != nil {
     return
   }
@@ -282,9 +621,10 @@ func (p *AddrTXServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunc
 
 func NewAddrTXServiceProcessor(handler AddrTXService) *AddrTXServiceProcessor {
 
-  self2 := &AddrTXServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self2.processorMap["getAddr"] = &addrTXServiceProcessorGetAddr{handler:handler}
-return self2
+  self4 := &AddrTXServiceProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self4.processorMap["GetAddr"] = &addrTXServiceProcessorGetAddr{handler:handler}
+  self4.processorMap["GetTX"] = &addrTXServiceProcessorGetTX{handler:handler}
+return self4
 }
 
 func (p *AddrTXServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -295,12 +635,12 @@ func (p *AddrTXServiceProcessor) Process(iprot, oprot thrift.TProtocol) (success
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x3 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x5 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x3.Write(oprot)
+  x5.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush()
-  return false, x3
+  return false, x5
 
 }
 
@@ -313,7 +653,7 @@ func (p *addrTXServiceProcessorGetAddr) Process(seqId int32, iprot, oprot thrift
   if err = args.Read(iprot); err != nil {
     iprot.ReadMessageEnd()
     x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-    oprot.WriteMessageBegin("getAddr", thrift.EXCEPTION, seqId)
+    oprot.WriteMessageBegin("GetAddr", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
@@ -325,8 +665,8 @@ func (p *addrTXServiceProcessorGetAddr) Process(seqId int32, iprot, oprot thrift
 var retval string
   var err2 error
   if retval, err2 = p.handler.GetAddr(args.Msg); err2 != nil {
-    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing getAddr: " + err2.Error())
-    oprot.WriteMessageBegin("getAddr", thrift.EXCEPTION, seqId)
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetAddr: " + err2.Error())
+    oprot.WriteMessageBegin("GetAddr", thrift.EXCEPTION, seqId)
     x.Write(oprot)
     oprot.WriteMessageEnd()
     oprot.Flush()
@@ -334,7 +674,55 @@ var retval string
   } else {
     result.Success = &retval
 }
-  if err2 = oprot.WriteMessageBegin("getAddr", thrift.REPLY, seqId); err2 != nil {
+  if err2 = oprot.WriteMessageBegin("GetAddr", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type addrTXServiceProcessorGetTX struct {
+  handler AddrTXService
+}
+
+func (p *addrTXServiceProcessorGetTX) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := AddrTXServiceGetTXArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("GetTX", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := AddrTXServiceGetTXResult{}
+var retval string
+  var err2 error
+  if retval, err2 = p.handler.GetTX(args.Msg); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetTX: " + err2.Error())
+    oprot.WriteMessageBegin("GetTX", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("GetTX", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -423,7 +811,7 @@ func (p *AddrTXServiceGetAddrArgs)  ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *AddrTXServiceGetAddrArgs) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("getAddr_args"); err != nil {
+  if err := oprot.WriteStructBegin("GetAddr_args"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField1(oprot); err != nil { return err }
@@ -522,7 +910,7 @@ func (p *AddrTXServiceGetAddrResult)  ReadField0(iprot thrift.TProtocol) error {
 }
 
 func (p *AddrTXServiceGetAddrResult) Write(oprot thrift.TProtocol) error {
-  if err := oprot.WriteStructBegin("getAddr_result"); err != nil {
+  if err := oprot.WriteStructBegin("GetAddr_result"); err != nil {
     return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
   if p != nil {
     if err := p.writeField0(oprot); err != nil { return err }
@@ -551,6 +939,204 @@ func (p *AddrTXServiceGetAddrResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("AddrTXServiceGetAddrResult(%+v)", *p)
+}
+
+// Attributes:
+//  - Msg
+type AddrTXServiceGetTXArgs struct {
+  Msg *GetTXMsg `thrift:"msg,1" db:"msg" json:"msg"`
+}
+
+func NewAddrTXServiceGetTXArgs() *AddrTXServiceGetTXArgs {
+  return &AddrTXServiceGetTXArgs{}
+}
+
+var AddrTXServiceGetTXArgs_Msg_DEFAULT *GetTXMsg
+func (p *AddrTXServiceGetTXArgs) GetMsg() *GetTXMsg {
+  if !p.IsSetMsg() {
+    return AddrTXServiceGetTXArgs_Msg_DEFAULT
+  }
+return p.Msg
+}
+func (p *AddrTXServiceGetTXArgs) IsSetMsg() bool {
+  return p.Msg != nil
+}
+
+func (p *AddrTXServiceGetTXArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if fieldTypeId == thrift.STRUCT {
+        if err := p.ReadField1(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *AddrTXServiceGetTXArgs)  ReadField1(iprot thrift.TProtocol) error {
+  p.Msg = &GetTXMsg{}
+  if err := p.Msg.Read(iprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error reading struct: ", p.Msg), err)
+  }
+  return nil
+}
+
+func (p *AddrTXServiceGetTXArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("GetTX_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *AddrTXServiceGetTXArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("msg", thrift.STRUCT, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:msg: ", p), err) }
+  if err := p.Msg.Write(oprot); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T error writing struct: ", p.Msg), err)
+  }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:msg: ", p), err) }
+  return err
+}
+
+func (p *AddrTXServiceGetTXArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("AddrTXServiceGetTXArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type AddrTXServiceGetTXResult struct {
+  Success *string `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewAddrTXServiceGetTXResult() *AddrTXServiceGetTXResult {
+  return &AddrTXServiceGetTXResult{}
+}
+
+var AddrTXServiceGetTXResult_Success_DEFAULT string
+func (p *AddrTXServiceGetTXResult) GetSuccess() string {
+  if !p.IsSetSuccess() {
+    return AddrTXServiceGetTXResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *AddrTXServiceGetTXResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *AddrTXServiceGetTXResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if fieldTypeId == thrift.STRING {
+        if err := p.ReadField0(iprot); err != nil {
+          return err
+        }
+      } else {
+        if err := iprot.Skip(fieldTypeId); err != nil {
+          return err
+        }
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *AddrTXServiceGetTXResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  p.Success = &v
+}
+  return nil
+}
+
+func (p *AddrTXServiceGetTXResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("GetTX_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *AddrTXServiceGetTXResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteString(string(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *AddrTXServiceGetTXResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("AddrTXServiceGetTXResult(%+v)", *p)
 }
 
 
