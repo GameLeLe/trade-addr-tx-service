@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+
+	base58check "github.com/GameLeLe/trade-addr-tx-service/base58check"
 )
 
 //TXin represents tx input of a transaction.
@@ -247,4 +249,23 @@ func toVI(n uint64) []byte {
 	b[0] = 0xff
 	binary.LittleEndian.PutUint64(b[1:], n)
 	return b
+}
+
+//CreateP2PKHScriptPubkey ...
+func CreateP2PKHScriptPubkey(publicKeyBase58 string) ([]byte, error) {
+	publicKeyBytes, _, err := base58check.Decode(publicKeyBase58)
+	if err != nil {
+		return nil, err
+	}
+	publicKeyBytes = publicKeyBytes[1:]
+
+	var scriptPubKey bytes.Buffer
+	scriptPubKey.WriteByte(opDUP)
+	scriptPubKey.WriteByte(opHASH160)
+	scriptPubKey.WriteByte(byte(len(publicKeyBytes))) //PUSH
+	scriptPubKey.Write(publicKeyBytes)
+	scriptPubKey.WriteByte(opEQUALVERIFY)
+	scriptPubKey.WriteByte(opCHECKSIG)
+	script := scriptPubKey.Bytes()
+	return script, nil
 }

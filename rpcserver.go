@@ -24,6 +24,10 @@ func newRPCServer(port int) *rpcServer {
 type rpcThrift struct {
 }
 
+func (rpcT *rpcThrift) GetTX(msg *addrtx.GetTXMsg) (string, error) {
+	return "", nil
+}
+
 func (rpcT *rpcThrift) GetAddr(msg *addrtx.GetAddrMsg) (string, error) {
 	coinType := msg.CoinType
 	uid := msg.UID
