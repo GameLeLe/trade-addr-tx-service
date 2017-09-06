@@ -1,5 +1,13 @@
 package main
 
+import (
+	"fmt"
+	"math/big"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
+)
+
 // func main() {
 // 	// Generate a mnemonic for memorization or user-friendly seeds
 // 	entropy, _ := bip39.NewEntropy(256)
@@ -72,6 +80,107 @@ package main
 // 	rpcServe.start()
 // }
 
-func main() {
+// func main() {
+// 	mnemonic := "duty capital transfer goose segment trap good kite ramp before amused fiber alter awful into chair smile erupt burger scare culture quote visit dragon"
+// 	password := "222222"
+// 	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
+// 	seed := bip39.NewSeed(mnemonic, password)
+// 	// Create a master private key
+// 	masterprv := hdwallet.MasterKey(seed)
+// 	// Convert a private key to public key
+// 	masterpub := masterprv.Pub()
+// 	childpub0, _ := masterpub.Child(0)
+// 	// Generate new child key based on private or public key
+// 	//childprv, err := masterprv.Child(0)
+// 	fromUID := 100
+// 	//fromAmount := 1
+// 	toUID := 101
+// 	//toAmount := 1
+// 	childpubFromUID, _ := childpub0.Child(uint32(fromUID))
+// 	childpubToUID, _ := childpub0.Child(uint32(toUID))
 
+// 	// secp256k1 := btcec.S256()
+// 	// key, err := btcec.ParsePubKey(pubKeyByte, secp256k1)
+// 	// if err != nil {
+// 	// 	return nil, err
+// 	// }
+
+// 	var totalAmount uint64
+// 	totalAmount = 1
+
+// 	fromAddr := genBTCAddr(childpubFromUID.Pub().Key, false)
+// 	fromKey := &btc.Key{}
+// 	fromPub, _ := btc.GetPublicKey(childpubFromUID.Pub().Key, false)
+// 	fromKey.Pub = fromPub
+
+// 	toAddr := genBTCAddr(childpubToUID.Pub().Key, false)
+// 	toKey := &btc.Key{}
+// 	toPub, _ := btc.GetPublicKey(childpubFromUID.Pub().Key, false)
+// 	toKey.Pub = toPub
+
+// 	service, _ := btc.NewBlockrService()
+// 	utxos, _ := service.GetUTXO(fromAddr, fromKey)
+
+// 	sort.Sort(utxos)
+
+// 	tx := btc.TX{}
+
+// 	txins := make([]*btc.TXin, 0, 10)
+// 	var amount uint64
+// 	for i := range utxos {
+// 		utxo := utxos[len(utxos)-1-i]
+// 		txin := btc.TXin{}
+// 		txin.Hash = utxo.Hash
+// 		txin.Index = utxo.Index
+// 		txin.Sequence = uint32(0xffffffff)
+// 		txin.PrevScriptPubkey = utxo.Script
+// 		txin.CreateScriptSig = nil
+// 		txins = append(txins, &txin)
+// 		if amount += utxo.Amount; amount >= totalAmount {
+// 			break
+// 		}
+// 	}
+
+// 	txouts := make([]*btc.TXout, 0, 10)
+// 	txout := &btc.TXout{}
+// 	txout.Value = totalAmount
+// 	txout.ScriptPubkey, _ = btc.CreateP2PKHScriptPubkey(toAddr)
+// 	txouts = append(txouts, txout)
+// 	if amount-totalAmount > 0 {
+// 		txout := &btc.TXout{}
+// 		txout.Value = amount - totalAmount
+// 		txout.ScriptPubkey, _ = btc.CreateP2PKHScriptPubkey(fromAddr)
+// 		txouts = append(txouts, txout)
+// 	}
+// 	rawtx, err := tx.MakeTX()
+// 	if err != nil {
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(rawtx)
+
+// 	// //get utxo
+// 	// service, _ := btc.NewBlockrService()
+// 	// service.GetUTXO(genBTCAddr(childpubFromUID.Pub().Key))
+
+// 	// var rawtx []byte
+// 	// tx := btc.TX{}
+// 	// tx.Locktime = 0
+// 	// var kb uint = 1
+
+// 	// fmt.Println(childpubFromUID)
+// 	// fmt.Println(childpubToUID)
+// }
+
+func main() {
+	//fromAddrStr := "0xbAc66419aC1DCD91c5CBAbEAAd865d70F48DD7ac"
+	toAddrStr := "0x34B02FdF4De0048AE3e3e159268486A3A43C6940"
+	//fromAddr := common.HexToAddress(fromAddrStr)
+	toAddr := common.HexToAddress(toAddrStr)
+	var totalAmount *big.Int
+	var nonce uint64
+	totalAmount = new(big.Int)
+	totalAmount.SetInt64(1)
+	nonce = 1
+	tx := types.NewTransaction(nonce, toAddr, totalAmount, nil, nil, nil)
+	fmt.Println(tx.String())
 }
