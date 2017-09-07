@@ -182,5 +182,6 @@ func main() {
 	totalAmount.SetInt64(1)
 	nonce = 1
 	tx := types.NewTransaction(nonce, toAddr, totalAmount, nil, nil, nil)
+	//hex.EncodeToString(tx.MarshalJSON())
 	fmt.Println(tx.String())
 }

@@ -6,6 +6,7 @@ import (
 	"math/big"
 
 	"github.com/GameLeLe/trade-addr-tx-service/base58check"
+	"github.com/GameLeLe/trade-addr-tx-service/eth"
 	"github.com/GameLeLe/trade-addr-tx-service/hdwallet"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -44,13 +45,14 @@ func getETHTX(fromPubKey []byte, toPubKey []byte, amount int64) string {
 	totalAmount.SetInt64(amount)
 	//TODO how to get next nonce of from account?
 	nonce = 1
-	//TODO set default gas limit & gas price
+
 	gasLimit := new(big.Int)
 	gasPrice := new(big.Int)
 	gasLimit.SetInt64(eth.DefaultGasLimit)
 	gasPrice.SetInt64(eth.DefaultGasPrice)
 
 	tx := types.NewTransaction(nonce, toAddr, totalAmount, gasLimit, gasPrice, nil)
+	//tx.WithSignature
 	//TODO error need to be catched
 	jsonStr, _ := tx.MarshalJSON()
 	return hex.EncodeToString(jsonStr)

@@ -25,6 +25,33 @@ type rpcThrift struct {
 }
 
 func (rpcT *rpcThrift) GetTX(msg *addrtx.GetTXMsg) (string, error) {
+	coinType := msg.CoinType
+	fromUID := msg.FromUID
+	totalAmount := msg.FromAmount
+	toUID := msg.ToUID
+	mnemonic := "duty capital transfer goose segment trap good kite ramp before amused fiber alter awful into chair smile erupt burger scare culture quote visit dragon"
+	password := "222222"
+	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
+	seed := bip39.NewSeed(mnemonic, password)
+	// Create a master private key
+	masterprv := hdwallet.MasterKey(seed)
+	// Convert a private key to public key
+	masterpub := masterprv.Pub()
+	// Generate new child key based on private or public key
+	//childprv, err := masterprv.Child(0)
+	childpub0, _ := masterpub.Child(0)
+	childpubFrom, _ := childpub0.Child(uint32(fromUID))
+	childpubTO, _ := childpub0.Child(uint32(toUID))
+	switch coinType {
+	case "BTC":
+		return "", nil
+	case "ETH":
+		txJSONStr := getETHTX(childpubFrom.Pub().Key, childpubTO.Pub().Key, totalAmount)
+		return txJSONStr, nil
+	default:
+		return "", nil
+	}
+
 	return "", nil
 }
 
