@@ -37,6 +37,7 @@ func genBTCAddr(compressedKey []byte, isTestnet bool) string {
 	address := base58check.Encode(publicKeyPrefix, ripeHashedBytes)
 	return address
 }
+
 func getETHTX(fromPubKey []byte, toPubKey []byte, amount int64) string {
 	toAddr := common.HexToAddress(genETHAddr(toPubKey))
 	var totalAmount *big.Int
