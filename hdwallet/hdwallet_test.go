@@ -2,7 +2,10 @@ package hdwallet
 
 import (
 	"encoding/hex"
+	"os"
 	"testing"
+
+	bip39 "github.com/GameLeLe/trade-addr-tx-service/bip39"
 )
 
 // implements https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#test-vectors
@@ -207,5 +210,28 @@ func BenchmarkStringAddress(b *testing.B) {
 func BenchmarkStringCheck(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		StringCheck(m_pub2)
+	}
+}
+
+func TestWalletFileConvert(t *testing.T) {
+	filename := "./test_file"
+	defer os.Remove(filename)
+	mnemonic := "duty capital transfer goose segment trap good kite ramp before amused fiber alter awful into chair smile erupt burger scare culture quote visit dragon"
+	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
+	seed := bip39.NewSeed(mnemonic, "")
+	// Create a master private key
+	masterprv := MasterKey(seed)
+	// Convert a private key to public key
+	masterpub := masterprv.Pub()
+	err := WalletToFile(filename, masterpub)
+	if err != nil {
+		t.Errorf("Wallet to File error: %v", err)
+	}
+	masterpubInfile, err := ReadWalletFromFile(filename)
+	if err != nil {
+		t.Errorf("File to Wallet error: %v", err)
+	}
+	if masterpub.String() != masterpubInfile.String() {
+		t.Errorf("master pub not matched: %s|%s", masterpub.String(), masterpubInfile.String())
 	}
 }

@@ -36,10 +36,14 @@
 package hdwallet
 
 import (
+	"bufio"
+	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
+	"io/ioutil"
 	"math/big"
+	"os"
 
 	"github.com/btcsuite/btcd/btcec"
 	"golang.org/x/crypto/ripemd160"
@@ -120,6 +124,128 @@ func Expand(key []byte) (*big.Int, *big.Int) {
 		y = beta.Sub(params.P, beta)
 	}
 	return x, y
+}
+
+//WalletToFile write the HDWallet bytes to file
+func WalletToFile(filename string, wallet *HDWallet) error {
+	var err error
+	masterpub := wallet
+	buf := new(bytes.Buffer)
+	tmpBytes := make([]byte, 2)
+	//write vBytes
+	binary.BigEndian.PutUint16(tmpBytes, uint16(len(masterpub.Vbytes)))
+	_, err = buf.Write(tmpBytes)
+	if err != nil {
+		return err
+	}
+	_, err = buf.Write(masterpub.Vbytes)
+	if err != nil {
+		return err
+	}
+	//write Fingerprint
+	binary.BigEndian.PutUint16(tmpBytes, uint16(len(masterpub.Fingerprint)))
+	_, err = buf.Write(tmpBytes)
+	if err != nil {
+		return err
+	}
+	_, err = buf.Write(masterpub.Fingerprint)
+	if err != nil {
+		return err
+	}
+	//write I
+	binary.BigEndian.PutUint16(tmpBytes, uint16(len(masterpub.I)))
+	_, err = buf.Write(tmpBytes)
+	if err != nil {
+		return err
+	}
+	_, err = buf.Write(masterpub.I)
+	if err != nil {
+		return err
+	}
+	//write Chaincode
+	binary.BigEndian.PutUint16(tmpBytes, uint16(len(masterpub.Chaincode)))
+	_, err = buf.Write(tmpBytes)
+	if err != nil {
+		return err
+	}
+	_, err = buf.Write(masterpub.Chaincode)
+	if err != nil {
+		return err
+	}
+	//write Key
+	binary.BigEndian.PutUint16(tmpBytes, uint16(len(masterpub.Key)))
+	_, err = buf.Write(tmpBytes)
+	if err != nil {
+		return err
+	}
+	_, err = buf.Write(masterpub.Key)
+	if err != nil {
+		return err
+	}
+	//write to file
+	err = ioutil.WriteFile(filename, buf.Bytes(), 0666)
+	return err
+}
+
+//ReadWalletFromFile read the hdwallet object in the file
+func ReadWalletFromFile(filename string) (*HDWallet, error) {
+	var err error
+	//read from file
+	fi, _ := os.Open(filename)
+	defer fi.Close()
+	masterPubInFile := &HDWallet{}
+	r := bufio.NewReader(fi)
+	tmpBytes := make([]byte, 2)
+	//read vbytes
+	r.Read(tmpBytes)
+	length := binary.BigEndian.Uint16(tmpBytes)
+	masterPubInFile.Vbytes = make([]byte, length)
+	_, err = r.Read(masterPubInFile.Vbytes)
+	if err != nil {
+		return nil, err
+	}
+	//read Fingerprint
+	r.Read(tmpBytes)
+	length = binary.BigEndian.Uint16(tmpBytes)
+	masterPubInFile.Fingerprint = make([]byte, length)
+	_, err = r.Read(masterPubInFile.Fingerprint)
+	if err != nil {
+		return nil, err
+	}
+	//read I
+	_, err = r.Read(tmpBytes)
+	if err != nil {
+		return nil, err
+	}
+	length = binary.BigEndian.Uint16(tmpBytes)
+	masterPubInFile.I = make([]byte, length)
+	_, err = r.Read(masterPubInFile.I)
+	if err != nil {
+		return nil, err
+	}
+	//read Chaincode
+	_, err = r.Read(tmpBytes)
+	if err != nil {
+		return nil, err
+	}
+	length = binary.BigEndian.Uint16(tmpBytes)
+	masterPubInFile.Chaincode = make([]byte, length)
+	_, err = r.Read(masterPubInFile.Chaincode)
+	if err != nil {
+		return nil, err
+	}
+	//read Chaincode
+	_, err = r.Read(tmpBytes)
+	if err != nil {
+		return nil, err
+	}
+	length = binary.BigEndian.Uint16(tmpBytes)
+	masterPubInFile.Key = make([]byte, length)
+	_, err = r.Read(masterPubInFile.Key)
+	if err != nil {
+		return nil, err
+	}
+	return masterPubInFile, nil
 }
 
 func addPrivKeys(k1, k2 []byte) []byte {
