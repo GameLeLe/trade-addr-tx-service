@@ -72,7 +72,7 @@ func (rpcT *rpcThrift) GetAddr(msg *addrtx.GetAddrMsg) (string, error) {
 	case "ETH":
 		childpubUID, _ := rpcT.ethPubKey.Child(uint32(uid))
 		addr := genETHAddr(childpubUID.Pub().Key)
-		return addr, nil
+		return "0x" + addr, nil
 	default:
 		return "", errors.New("coin type not supported")
 	}
