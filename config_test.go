@@ -11,6 +11,8 @@ import (
 func TestDAConfig(t *testing.T) {
 	fileStr := `
 	title = "digital assets service"
+	btc_master_pub_key_file = "btc_master_pubkey"
+	eth_master_pub_key_file = "eth_master_pubkey"
 	
 	[rpc]
 	host = "0.0.0.0"
@@ -41,6 +43,9 @@ func TestDAConfig(t *testing.T) {
 	}
 	//check title
 	assert.Equal(t, "digital assets service", config.Title, "config title not matched")
+	//check pub key file
+	assert.Equal(t, "btc_master_pubkey", config.BTCMasterPubKeyFile, "config btc master pub key file not matched")
+	assert.Equal(t, "eth_master_pubkey", config.ETHMasterPubKeyFile, "config eth master pub key file not matched")
 	//check rpc config
 	assert.Equal(t, "0.0.0.0", config.RPCConfig.Host, "rpc host not matched")
 	assert.Equal(t, 8090, config.RPCConfig.Port, "rpc port not matched")

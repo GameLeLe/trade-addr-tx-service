@@ -1,5 +1,8 @@
 title = "digital assets service"
 
+btc_master_pub_key_file = "btc_master_pubkey"
+eth_master_pub_key_file = "eth_master_pubkey"
+
 [rpc]
 host = "0.0.0.0"
 port = 8090

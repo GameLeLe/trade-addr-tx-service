@@ -126,6 +126,42 @@ func Expand(key []byte) (*big.Int, *big.Int) {
 	return x, y
 }
 
+func addPrivKeys(k1, k2 []byte) []byte {
+	i1 := big.NewInt(0).SetBytes(k1)
+	i2 := big.NewInt(0).SetBytes(k2)
+	i1.Add(i1, i2)
+	i1.Mod(i1, curve.Params().N)
+	k := i1.Bytes()
+	zero, _ := hex.DecodeString("00")
+	return append(zero, k...)
+}
+
+func addPubKeys(k1, k2 []byte) []byte {
+	x1, y1 := expand(k1)
+	x2, y2 := expand(k2)
+	return compress(curve.Add(x1, y1, x2, y2))
+}
+
+func uint32ToByte(i uint32) []byte {
+	a := make([]byte, 4)
+	binary.BigEndian.PutUint32(a, i)
+	return a
+}
+
+func uint16ToByte(i uint16) []byte {
+	a := make([]byte, 2)
+	binary.BigEndian.PutUint16(a, i)
+	return a[1:]
+}
+
+func byteToUint16(b []byte) uint16 {
+	if len(b) == 1 {
+		zero := make([]byte, 1)
+		b = append(zero, b...)
+	}
+	return binary.BigEndian.Uint16(b)
+}
+
 //WalletToFile write the HDWallet bytes to file
 func WalletToFile(filename string, wallet *HDWallet) error {
 	var err error
@@ -179,6 +215,12 @@ func WalletToFile(filename string, wallet *HDWallet) error {
 		return err
 	}
 	_, err = buf.Write(masterpub.Key)
+	if err != nil {
+		return err
+	}
+	//write depth
+	binary.BigEndian.PutUint16(tmpBytes, masterpub.Depth)
+	_, err = buf.Write(tmpBytes)
 	if err != nil {
 		return err
 	}
@@ -245,41 +287,12 @@ func ReadWalletFromFile(filename string) (*HDWallet, error) {
 	if err != nil {
 		return nil, err
 	}
-	return masterPubInFile, nil
-}
-
-func addPrivKeys(k1, k2 []byte) []byte {
-	i1 := big.NewInt(0).SetBytes(k1)
-	i2 := big.NewInt(0).SetBytes(k2)
-	i1.Add(i1, i2)
-	i1.Mod(i1, curve.Params().N)
-	k := i1.Bytes()
-	zero, _ := hex.DecodeString("00")
-	return append(zero, k...)
-}
-
-func addPubKeys(k1, k2 []byte) []byte {
-	x1, y1 := expand(k1)
-	x2, y2 := expand(k2)
-	return compress(curve.Add(x1, y1, x2, y2))
-}
-
-func uint32ToByte(i uint32) []byte {
-	a := make([]byte, 4)
-	binary.BigEndian.PutUint32(a, i)
-	return a
-}
-
-func uint16ToByte(i uint16) []byte {
-	a := make([]byte, 2)
-	binary.BigEndian.PutUint16(a, i)
-	return a[1:]
-}
-
-func byteToUint16(b []byte) uint16 {
-	if len(b) == 1 {
-		zero := make([]byte, 1)
-		b = append(zero, b...)
+	//read depth
+	_, err = r.Read(tmpBytes)
+	if err != nil {
+		return nil, err
 	}
-	return binary.BigEndian.Uint16(b)
+	masterPubInFile.Depth = binary.BigEndian.Uint16(tmpBytes)
+
+	return masterPubInFile, nil
 }

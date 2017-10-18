@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"strconv"
+	"sync"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
 	bip39 "github.com/GameLeLe/trade-addr-tx-service/bip39"
@@ -11,13 +12,16 @@ import (
 )
 
 type rpcServer struct {
+	started      bool
+	wg           *sync.WaitGroup
 	addr         string
 	thriftServer *thrift.TSimpleServer
 }
 
-func newRPCServer(port int) *rpcServer {
+func newRPCServer(port int, wg *sync.WaitGroup) *rpcServer {
 	server := &rpcServer{}
 	server.addr = "0.0.0.0:" + strconv.Itoa(port)
+	server.wg = wg
 	return server
 }
 
@@ -51,8 +55,6 @@ func (rpcT *rpcThrift) GetTX(msg *addrtx.GetTXMsg) (string, error) {
 	default:
 		return "", nil
 	}
-
-	return "", nil
 }
 
 func (rpcT *rpcThrift) GetAddr(msg *addrtx.GetAddrMsg) (string, error) {
@@ -83,8 +85,8 @@ func (rpcT *rpcThrift) GetAddr(msg *addrtx.GetAddrMsg) (string, error) {
 }
 
 func (server *rpcServer) start() {
-	// wg.Add(1)
-	// defer wg.Add(-1)
+	server.wg.Add(1)
+	defer server.wg.Done()
 	transportFactory := thrift.NewTFramedTransportFactory(thrift.NewTTransportFactory())
 	protocolFactory := thrift.NewTBinaryProtocolFactoryDefault()
 	serverTransport, err := thrift.NewTServerSocket(server.addr)

@@ -8,10 +8,12 @@ import (
 
 //DigitalAssetsConfig config
 type DigitalAssetsConfig struct {
-	Title       string      `toml:"title"`
-	RPCConfig   rpcConfig   `toml:"rpc"`
-	DBConfig    mysqlConfig `toml:"mysql"`
-	RedisConfig redisConfig `toml:"redis"`
+	Title               string      `toml:"title"`
+	BTCMasterPubKeyFile string      `toml:"btc_master_pub_key_file"`
+	ETHMasterPubKeyFile string      `toml:"eth_master_pub_key_file"`
+	RPCConfig           rpcConfig   `toml:"rpc"`
+	DBConfig            mysqlConfig `toml:"mysql"`
+	RedisConfig         redisConfig `toml:"redis"`
 }
 
 type mysqlConfig struct {

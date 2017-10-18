@@ -235,3 +235,75 @@ func TestWalletFileConvert(t *testing.T) {
 		t.Errorf("master pub not matched: %s|%s", masterpub.String(), masterpubInfile.String())
 	}
 }
+
+func TestGenPubKeyFile(t *testing.T) {
+	ethFileName := "eth_master_pubkey"
+	btcFileName := "btc_master_pubkey"
+
+	mnemonic := "duty capital transfer goose segment trap good kite ramp before amused fiber alter awful into chair smile erupt burger scare culture quote visit dragon"
+	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
+	seed := bip39.NewSeed(mnemonic, "")
+	// Create a master private key
+	masterprv := MasterKey(seed)
+
+	filename := ethFileName
+	// Convert a private key to public key
+	childprv44, err := masterprv.Child(2147483692)
+	if err != nil {
+		t.Errorf("get master pub key child 44 error: %v", err)
+	}
+	childprv44_60, err := childprv44.Child(2147483708)
+	if err != nil {
+		t.Errorf("get master pub key child 44/60 error: %v", err)
+	}
+	childprv44_60_0, err := childprv44_60.Child(2147483648)
+	if err != nil {
+		t.Errorf("get master pub key child 44/60/0 error: %v", err)
+	}
+
+	// Convert a private key to public key
+	masterpub := childprv44_60_0.Pub()
+	err = WalletToFile(filename, masterpub)
+	if err != nil {
+		t.Errorf("Wallet to File error: %v", err)
+	}
+	masterpubInfile, err := ReadWalletFromFile(filename)
+	if err != nil {
+		t.Errorf("File to Wallet error: %v", err)
+	}
+	if masterpub.String() != masterpubInfile.String() {
+		t.Errorf("master pub not matched: %s|%s", masterpub.String(), masterpubInfile.String())
+	}
+
+	filename = btcFileName
+	// Convert a private key to public key
+	childprv44, err = masterprv.Child(2147483692)
+	if err != nil {
+		t.Errorf("get master pub key child 44 error: %v", err)
+	}
+	childprv44_0, err := childprv44.Child(2147483648)
+	if err != nil {
+		t.Errorf("get master pub key child 44/60 error: %v", err)
+	}
+	childprv44_0_0, err := childprv44_0.Child(2147483648)
+	if err != nil {
+		t.Errorf("get master pub key child 44/60/0 error: %v", err)
+	}
+	childprv44_0_0_0, err := childprv44_0_0.Child(0)
+	if err != nil {
+		t.Errorf("get master pub key child 44/60/0/0 error: %v", err)
+	}
+	masterpub = childprv44_0_0_0.Pub()
+
+	err = WalletToFile(filename, masterpub)
+	if err != nil {
+		t.Errorf("Wallet to File error: %v", err)
+	}
+	masterpubInfile, err = ReadWalletFromFile(filename)
+	if err != nil {
+		t.Errorf("File to Wallet error: %v", err)
+	}
+	if masterpub.String() != masterpubInfile.String() {
+		t.Errorf("master pub not matched: %s|%s", masterpub.String(), masterpubInfile.String())
+	}
+}
