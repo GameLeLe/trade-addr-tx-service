@@ -15,13 +15,15 @@ import (
 	"github.com/GameLeLe/trade-addr-tx-service/hdwallet"
 )
 
-var wg sync.WaitGroup
-var daConfig *DigitalAssetsConfig
-var daRPCServer *rpcServer
-var configFile string
-var startFlag bool
-var stopFlag bool
-var cc chan struct{}
+var (
+	wg          sync.WaitGroup
+	daConfig    *DigitalAssetsConfig
+	daRPCServer *rpcServer
+	configFile  string
+	startFlag   bool
+	stopFlag    bool
+	cc          chan struct{}
+)
 
 func main() {
 	flag.Parse()
