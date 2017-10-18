@@ -150,9 +150,9 @@ func TestETHAddrBIP44(t *testing.T) {
 	if err != nil {
 		t.Errorf("get master pub key child 44/60/0 error: %v", err)
 	}
-
 	// Convert a private key to public key
 	masterpub := childprv44_60_0.Pub()
+
 	cases := []struct {
 		uid      int
 		expected string

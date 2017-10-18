@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"strconv"
 	"sync"
@@ -26,6 +27,8 @@ func newRPCServer(port int, wg *sync.WaitGroup) *rpcServer {
 }
 
 type rpcThrift struct {
+	ethPubKey *hdwallet.HDWallet
+	btcPubKey *hdwallet.HDWallet
 }
 
 func (rpcT *rpcThrift) GetTX(msg *addrtx.GetTXMsg) (string, error) {
@@ -60,31 +63,22 @@ func (rpcT *rpcThrift) GetTX(msg *addrtx.GetTXMsg) (string, error) {
 func (rpcT *rpcThrift) GetAddr(msg *addrtx.GetAddrMsg) (string, error) {
 	coinType := msg.CoinType
 	uid := msg.UID
-	mnemonic := "duty capital transfer goose segment trap good kite ramp before amused fiber alter awful into chair smile erupt burger scare culture quote visit dragon"
-	password := "222222"
-	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
-	seed := bip39.NewSeed(mnemonic, password)
-	// Create a master private key
-	masterprv := hdwallet.MasterKey(seed)
-	// Convert a private key to public key
-	masterpub := masterprv.Pub()
-	// Generate new child key based on private or public key
-	//childprv, err := masterprv.Child(0)
-	childpub0, _ := masterpub.Child(0)
-	childpubUID, _ := childpub0.Child(uint32(uid))
+
 	switch coinType {
 	case "BTC":
+		childpubUID, _ := rpcT.btcPubKey.Child(uint32(uid))
 		addr := genBTCAddr(childpubUID.Pub().Key, false)
 		return addr, nil
 	case "ETH":
+		childpubUID, _ := rpcT.ethPubKey.Child(uint32(uid))
 		addr := genETHAddr(childpubUID.Pub().Key)
 		return addr, nil
 	default:
-		return "", nil
+		return "", errors.New("coin type not supported")
 	}
 }
 
-func (server *rpcServer) start() {
+func (server *rpcServer) start(ethPubKey, btcPubKey *hdwallet.HDWallet) {
 	server.wg.Add(1)
 	defer server.wg.Done()
 	transportFactory := thrift.NewTFramedTransportFactory(thrift.NewTTransportFactory())
@@ -95,6 +89,8 @@ func (server *rpcServer) start() {
 	}
 
 	handler := &rpcThrift{}
+	handler.ethPubKey = ethPubKey
+	handler.btcPubKey = btcPubKey
 	processor := addrtx.NewAddrTXServiceProcessor(handler)
 
 	server.thriftServer = thrift.NewTSimpleServer4(processor, serverTransport, transportFactory, protocolFactory)

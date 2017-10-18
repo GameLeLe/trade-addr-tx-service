@@ -8,15 +8,23 @@ import (
 	"time"
 
 	"git.apache.org/thrift.git/lib/go/thrift"
+	hdwallet "github.com/GameLeLe/trade-addr-tx-service/hdwallet"
 	addrtx "github.com/GameLeLe/trade-addr-tx-service/thrift/addrtx"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAddr(t *testing.T) {
 	var wg sync.WaitGroup
+	daConfig, err := ParseConfig("config.toml")
+	if err != nil {
+		t.Errorf("parse config file error: %v", err)
+	}
+
 	port := 8095
 	server := newRPCServer(port, &wg)
-	go server.start()
+	ethPubKey, _ := hdwallet.ReadWalletFromFile(daConfig.ETHMasterPubKeyFile)
+	btcPubKey, _ := hdwallet.ReadWalletFromFile(daConfig.BTCMasterPubKeyFile)
+	go server.start(ethPubKey, btcPubKey)
 	time.Sleep(100 * time.Millisecond)
 
 	transportFactory := thrift.NewTFramedTransportFactory(thrift.NewTTransportFactory())
@@ -63,15 +71,15 @@ func TestGetAddr(t *testing.T) {
 		uid      int
 		expected string
 	}{
-		{0, "0x5688cC7C4e79B6E65cffbE4e53A588a094324467"},
-		{2, "0xDDa4D8D48Eff4355cC1375c54E79c563f0284f46"},
-		{6, "0x471d34c3080aBE8Cd989706E64Af3D938D58D185"},
-		{9, "0xddA8AE84a3d6bA0AABf6e5B35331E78a5735321f"},
-		{12, "0x6af7DC6322cF03373FF39193c97a0CED888BF21a"},
-		{33, "0x7E3105EF8F1A9eDec032AB230b30E9e2A7eaD3Ee"},
-		{41, "0x150fF0b9B4C2aC7162e0009FE8244dbceCd1352A"},
-		{45, "0x7A66f224ed65dBdD96c538Ede50E54fe80082D23"},
-		{58, "0x1a461056433b93cfefc569aaB95f7bC40E5FC5e1"},
+		{0, "0x20EBEf408Dd557df2C1F3c1Ff3c541655f30c68D"},
+		{2, "0x3726Ad8dF5C8eBBDac562e32d08Ad50a1F6aC4cD"},
+		{6, "0x81b0ba94a11632E478C12E974b027E54f3e9226a"},
+		{9, "0xaEA3d615e5822F38931083AF70d5Cfb0A7eD0d73"},
+		{12, "0xd3b212FF285FF13ffad6f09543bE235d0241E272"},
+		{33, "0x071971219EFbd8177d353D13335365fF9d800eC7"},
+		{41, "0xdf6EC73F12252B0682b6d17961B1d0587FFbE8e4"},
+		{45, "0xaE8b5Fa895EdfF1D5Fdd11140e2D9F0EDf51Ef81"},
+		{58, "0x9a5fe3ABcEae5472a553266a35A3a02ae7Df23ad"},
 	}
 	for _, c := range ethCases {
 		msg := &addrtx.GetAddrMsg{}

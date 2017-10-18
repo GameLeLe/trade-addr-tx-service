@@ -240,7 +240,7 @@ func TestGenPubKeyFile(t *testing.T) {
 	ethFileName := "eth_master_pubkey"
 	btcFileName := "btc_master_pubkey"
 
-	mnemonic := "duty capital transfer goose segment trap good kite ramp before amused fiber alter awful into chair smile erupt burger scare culture quote visit dragon"
+	mnemonic := "bird march express devote nature tone rich shadow invest husband table chicken input pull zero shove stage typical color chimney fat entire split aware"
 	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
 	seed := bip39.NewSeed(mnemonic, "")
 	// Create a master private key
