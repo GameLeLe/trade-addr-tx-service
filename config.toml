@@ -1,0 +1,20 @@
+title = "digital assets service"
+
+[rpc]
+host = "0.0.0.0"
+port = 8090
+
+[mysql]
+host = "127.0.0.1"
+port = 3306
+db = "dump_test"
+user = "root"
+password = ""
+max_idle_conns = 10
+
+[redis]
+host = "127.0.0.1"
+port = 6379
+user = "root"
+password = ""
+db = 0

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"net"
 	"strings"
 	"testing"
 
@@ -136,7 +138,7 @@ func TestBTCAddrBIP44(t *testing.T) {
 }
 
 func TestETHAddrBIP44(t *testing.T) {
-	//m/44'/0'/0'/0/*
+	//m/44'/60'/0'/0/*
 	seed := getSeed()
 	masterprv := hdwallet.MasterKey(seed)
 	childprv44, err := masterprv.Child(2147483692)
@@ -194,4 +196,21 @@ func getSeed() []byte {
 	mnemonic := "bird march express devote nature tone rich shadow invest husband table chicken input pull zero shove stage typical color chimney fat entire split aware"
 	// Generate a Bip32 HD wallet for the mnemonic and a user supplied password
 	return bip39.NewSeed(mnemonic, "")
+}
+
+func TestSocket(t *testing.T) {
+	conn, err := net.Dial("tcp", "192.168.1.25:3250")
+	defer conn.Close()
+	if err != nil {
+		t.Errorf("conn error:%v", err)
+	}
+	for {
+		tmp := make([]byte, 1)
+		_, err := conn.Read(tmp)
+		if err != nil {
+			t.Errorf("read error:%v", err)
+			break
+		}
+	}
+	fmt.Println("break loop")
 }
